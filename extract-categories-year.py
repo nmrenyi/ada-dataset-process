@@ -1,6 +1,7 @@
 import os
 import json
 import pandas as pd
+import argparse
 if __name__ == '__main__':
     features_dict = {
         'categories': [],
@@ -13,7 +14,14 @@ if __name__ == '__main__':
         'channel_id': []
     }
     index = 0
-    with open('dataset/yt_metadata_en_sorted_abs.jsonl', 'r') as f:
+    parser = argparse.ArgumentParser(description='Extract categories and year from yt_metadata_en.jsonl')
+    parser.add_argument('--input_file', type=str, default='./dataset/__mini__yt_metadata_en.jsonl.100k', help='Path to the large input file')
+    parser.add_argument('--output_file', type=str, default='', help='Path to the output file)')
+    args = parser.parse_args()
+    input_file = args.input_file
+    output_file = args.output_file if args.output_file else input_file.replace('.jsonl', '_category_year.csv')
+
+    with open(input_file, 'r') as f:
         for line in f:
             data = json.loads(line)
             for key in features_dict.keys():
@@ -24,4 +32,4 @@ if __name__ == '__main__':
             if index % 1000000 == 0:
                 print(f"Processing line {index}")
             index += 1
-    pd.DataFrame(features_dict).to_csv('dataset/yt_metadata_en_sorted_abs_category_year.csv', index=False, sep='\t')
+    pd.DataFrame(features_dict).to_csv(output_file, index=False, sep='\t')
