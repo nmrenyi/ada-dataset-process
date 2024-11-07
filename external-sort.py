@@ -4,6 +4,7 @@
 import os
 import json
 import heapq
+import sys
 
 def chunk_sort(input_file, chunk_size, temp_dir="temp_chunks"):
     if not os.path.exists(temp_dir):
@@ -64,9 +65,11 @@ def merge_sorted_chunks(chunks, output_file):
         os.remove(chunk)
 
 if __name__ == "__main__":
+    # use system argument to get the input file
+    input_file = sys.argv[1] if len(sys.argv) > 1 else './dataset/__mini__yt_metadata_en.jsonl.100k'  # Path to the large input file
+    output_file = sys.argv[2] if len(sys.argv) > 2 else input_file.split('/')[-1].split('.')[0] + '_sorted.jsonl'  # Path to the output file
+
     # Example usage
-    input_file = 'yt_metadata_en.jsonl'  # Path to the large input file
-    output_file = 'sorted_output.jsonl'
     chunk_size = 100 * 1024 * 1024  # Size of each chunk in bytes (e.g., 100 MB)
 
     chunks = chunk_sort(input_file, chunk_size)
