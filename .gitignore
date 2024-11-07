@@ -2,6 +2,7 @@ dataset/
 temp_chunks/
 *.csv
 *.jsonl
+*.zip
 .DS_Store
 
 # Byte-compiled / optimized / DLL files
