@@ -96,6 +96,7 @@ if __name__ == "__main__":
     print("Chunk size:", args.chunk_size, "GB")
 
     chunks = chunk_sort(input_file, chunk_size)
+    print("All chunks created:", len(chunks), ", Merging chunks...")
     merge_sorted_chunks(chunks, output_file)
 
     print("Sorting completed! Sorted file:", output_file)
