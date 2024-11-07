@@ -32,8 +32,8 @@ def chunk_sort(input_file, chunk_size, temp_dir="temp_chunks"):
                     for item in current_chunk:
                         outfile.write(json.dumps(item) + '\n')
                 chunks.append(chunk_file)
-                print(f"Chunk {len(chunks)} created with {len(current_chunk)} items,
-                      {no_dislike_count_lines} lines without 'dislike_count',
+                print(f"Chunk {len(chunks)} created with {len(current_chunk)} items,\
+                      {no_dislike_count_lines} lines without 'dislike_count',\
                       and {no_like_count_lines} lines without 'like_count'")
                 current_chunk = []
                 no_dislike_count_lines = 0
