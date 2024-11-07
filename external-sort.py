@@ -7,7 +7,7 @@ import heapq
 import sys
 import argparse
 
-def chunk_sort(input_file, chunk_size, criterion, temp_dir="temp_chunks"):
+def chunk_sort(input_file, chunk_size, criterion, temp_dir):
     if not os.path.exists(temp_dir):
         os.makedirs(temp_dir)
 
@@ -92,6 +92,7 @@ if __name__ == "__main__":
     parser.add_argument('--output_file', type=str, default='', help='Path to the output file')
     parser.add_argument('--chunk_size', type=float, default=1.0, help='Size of each chunk in bytes (default: 1 GB)')
     parser.add_argument('--relative', type=int, default=0, help='sort by absolute dislike count or relative dislike count (dislike count divided by the sum of dislike and like count) (default: 0)')
+    parser.add_argument('--temp_dir', type=str, default='./temp_chunks', help='Path to the temporary directory')
     args = parser.parse_args()
 
     chunk_size = args.chunk_size * 2 ** 30
@@ -103,8 +104,9 @@ if __name__ == "__main__":
     print("Output file:", output_file)
     print("Chunk size:", args.chunk_size, "GB")
     print("Criterion: ", criterion)
+    print("Temporary directory:", args.temp_dir)
 
-    chunks = chunk_sort(input_file, chunk_size, criterion)
+    chunks = chunk_sort(input_file, chunk_size, criterion, temp_dir=args.temp_dir)
     print("All chunks created:", len(chunks), ", Merging chunks...")
     merge_sorted_chunks(chunks, output_file, criterion)
 
