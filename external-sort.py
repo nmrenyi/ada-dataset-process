@@ -25,6 +25,12 @@ def chunk_sort(input_file, chunk_size, temp_dir="temp_chunks"):
             if 'like_count' not in data or not data['like_count']:
                 no_like_count_lines += 1
                 data['like_count'] = -1
+
+            if data['dislike_count'] + data['like_count'] == 0:
+                data['rel_dislike'] = -42  # a random selected default value if demoninator == 0
+            else:
+                data['rel_dislike'] = data['dislike_count'] / (data['dislike_count'] + data['like_count'])
+
             current_chunk.append(data)
             if len(current_chunk) * len(line) >= chunk_size:
                 # Sort by 'dislike_count' in descending order
