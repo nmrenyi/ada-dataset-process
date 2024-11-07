@@ -13,8 +13,16 @@ def chunk_sort(input_file, chunk_size, temp_dir="temp_chunks"):
     chunks = []
     with open(input_file, 'r') as infile:
         current_chunk = []
+        no_dislike_count_lines = 0
+        no_like_count_lines = 0
         for line in infile:
             data = json.loads(line)
+            if 'dislike_count' not in data:
+                no_dislike_count_lines += 1
+                continue
+            if 'like_count' not in data:
+                no_like_count_lines += 1
+                continue
             current_chunk.append(data)
             if len(current_chunk) * len(line) >= chunk_size:
                 # Sort by 'dislike_count' in descending order
@@ -24,7 +32,12 @@ def chunk_sort(input_file, chunk_size, temp_dir="temp_chunks"):
                     for item in current_chunk:
                         outfile.write(json.dumps(item) + '\n')
                 chunks.append(chunk_file)
+                print(f"Chunk {len(chunks)} created with {len(current_chunk)} items,
+                      {no_dislike_count_lines} lines without 'dislike_count',
+                      and {no_like_count_lines} lines without 'like_count'")
                 current_chunk = []
+                no_dislike_count_lines = 0
+                no_like_count_lines = 0
 
         if current_chunk:  # Sort and write the last chunk if any data is left
             current_chunk.sort(key=lambda x: x['dislike_count'], reverse=True)
