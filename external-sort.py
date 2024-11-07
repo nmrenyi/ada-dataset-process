@@ -63,12 +63,13 @@ def merge_sorted_chunks(chunks, output_file):
     for chunk in chunks:
         os.remove(chunk)
 
-# Example usage
-input_file = 'yt_metadata_en.jsonl'  # Path to the large input file
-output_file = 'sorted_output.jsonl'
-chunk_size = 100 * 1024 * 1024  # Size of each chunk in bytes (e.g., 100 MB)
+if __name__ == "__main__":
+    # Example usage
+    input_file = 'yt_metadata_en.jsonl'  # Path to the large input file
+    output_file = 'sorted_output.jsonl'
+    chunk_size = 100 * 1024 * 1024  # Size of each chunk in bytes (e.g., 100 MB)
 
-chunks = chunk_sort(input_file, chunk_size)
-merge_sorted_chunks(chunks, output_file)
+    chunks = chunk_sort(input_file, chunk_size)
+    merge_sorted_chunks(chunks, output_file)
 
-print("Sorting completed! Sorted file:", output_file)
+    print("Sorting completed! Sorted file:", output_file)
