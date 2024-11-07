@@ -7,7 +7,7 @@ import heapq
 import sys
 import argparse
 
-def chunk_sort(input_file, chunk_size, temp_dir="temp_chunks"):
+def chunk_sort(input_file, chunk_size, criterion, temp_dir="temp_chunks"):
     if not os.path.exists(temp_dir):
         os.makedirs(temp_dir)
 
@@ -34,7 +34,7 @@ def chunk_sort(input_file, chunk_size, temp_dir="temp_chunks"):
             current_chunk.append(data)
             if len(current_chunk) * len(line) >= chunk_size:
                 # Sort by 'dislike_count' in descending order
-                current_chunk.sort(key=lambda x: x['dislike_count'], reverse=True)
+                current_chunk.sort(key=lambda x: x[criterion], reverse=True)
                 chunk_file = os.path.join(temp_dir, f"chunk_{len(chunks)}.jsonl")
                 with open(chunk_file, 'w') as outfile:
                     for item in current_chunk:
@@ -48,7 +48,7 @@ def chunk_sort(input_file, chunk_size, temp_dir="temp_chunks"):
                 no_like_count_lines = 0
 
         if current_chunk:  # Sort and write the last chunk if any data is left
-            current_chunk.sort(key=lambda x: x['dislike_count'], reverse=True)
+            current_chunk.sort(key=lambda x: x[criterion], reverse=True)
             chunk_file = os.path.join(temp_dir, f"chunk_{len(chunks)}.jsonl")
             with open(chunk_file, 'w') as outfile:
                 for item in current_chunk:
@@ -57,7 +57,7 @@ def chunk_sort(input_file, chunk_size, temp_dir="temp_chunks"):
 
     return chunks
 
-def merge_sorted_chunks(chunks, output_file):
+def merge_sorted_chunks(chunks, output_file, criterion):
     min_heap = []
     chunk_files = [open(chunk, 'r') for chunk in chunks]
 
@@ -67,7 +67,7 @@ def merge_sorted_chunks(chunks, output_file):
         if line:
             data = json.loads(line)
             # Use negative 'dislike_count' for descending order in min-heap
-            heapq.heappush(min_heap, (-data['dislike_count'], i, data))
+            heapq.heappush(min_heap, (-data[criterion], i, data))
 
     with open(output_file, 'w') as outfile:
         while min_heap:
@@ -76,7 +76,7 @@ def merge_sorted_chunks(chunks, output_file):
             next_line = chunk_files[idx].readline().strip()
             if next_line:
                 next_data = json.loads(next_line)
-                heapq.heappush(min_heap, (-next_data['dislike_count'], idx, next_data))
+                heapq.heappush(min_heap, (-next_data[criterion], idx, next_data))
 
     for file in chunk_files:
         file.close()
@@ -91,18 +91,21 @@ if __name__ == "__main__":
     parser.add_argument('--input_file', type=str, default='./dataset/__mini__yt_metadata_en.jsonl.100k', help='Path to the large input file')
     parser.add_argument('--output_file', type=str, default='', help='Path to the output file')
     parser.add_argument('--chunk_size', type=float, default=1.0, help='Size of each chunk in bytes (default: 1 GB)')
+    parser.add_argument('--relative', type=int, default=0, help='sort by absolute dislike count or relative dislike count (dislike count divided by the sum of dislike and like count) (default: 0)')
     args = parser.parse_args()
 
     chunk_size = args.chunk_size * 2 ** 30
     input_file = args.input_file
-    output_file = args.output_file if args.output_file else input_file.split('/')[-1].split('.')[0] + '_sorted.jsonl'
+    criterion = 'dislike_count' if not args.relative else 'rel_dislike'
+    output_file = args.output_file if args.output_file else input_file.split('/')[-1].split('.')[0] + f'_{criterion}' + '_sorted.jsonl'
 
     print("Input file:", args.input_file)
     print("Output file:", output_file)
     print("Chunk size:", args.chunk_size, "GB")
+    print("Criterion: ", criterion)
 
-    chunks = chunk_sort(input_file, chunk_size)
+    chunks = chunk_sort(input_file, chunk_size, criterion)
     print("All chunks created:", len(chunks), ", Merging chunks...")
-    merge_sorted_chunks(chunks, output_file)
+    merge_sorted_chunks(chunks, output_file, criterion)
 
     print("Sorting completed! Sorted file:", output_file)
