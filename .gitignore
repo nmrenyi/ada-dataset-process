@@ -1,5 +1,7 @@
 dataset/
 temp_chunks/
+*.csv
+*.jsonl
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
