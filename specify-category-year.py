@@ -8,12 +8,24 @@ def main():
     parser.add_argument('--output_dir', type=str, default='./specified_category_year/', help='Path to the output directory')
     args = parser.parse_args()
     input_file = f'dataset/yt_metadata_en_sorted_{'rel' if args.relative else 'abs'}_category_year.csv'
-    output_dir = args.output_dir
+    output_dir = os.path.join(args.output_dir, 'rel' if args.relative else 'abs')
     os.makedirs(output_dir, exist_ok=True)
-
+    # print args
+    print(f"Input file: {input_file}")
+    print(f"Output directory: {output_dir}")
+    print(f"Relative dislike?: {args.relative}")
+    # read the input file
+    print("Reading the input file...")
     df = pd.read_csv(input_file, sep='\t')
     print(df.info())
     print(df.head())
+    categories = df['categories'].value_counts().index.tolist()
+    upload_years = df['upload_date'].value_counts().index.tolist()
+    for category in categories:
+        for year in upload_years:
+            df_filtered = df[(df['categories'] == category) & (df['upload_date'] == year)]
+            df_filtered.to_csv(f'{output_dir}/{category}_{year}.csv', index=False, sep='\t')
+            print(f"Category: {category}, Year: {year}, Number of videos: {df_filtered.shape[0]} saved to {output_dir}/{category}_{year}.csv")
 
 if __name__ == '__main__':
     main()
