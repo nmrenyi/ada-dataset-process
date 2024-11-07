@@ -7,7 +7,7 @@ def main():
     parser.add_argument('--relative', type=int, default=0, help='relative dislike count or not (default: 0)')
     parser.add_argument('--output_dir', type=str, default='./specified_category_year/', help='Path to the output directory')
     args = parser.parse_args()
-    input_file = f'dataset/yt_metadata_en_sorted_{'rel' if args.relative else 'abs'}_category_year.csv'
+    input_file = f'dataset/yt_metadata_en_sorted_{'rel' if args.relative else 'abs'}_basic.csv'
     output_dir = os.path.join(args.output_dir, 'rel' if args.relative else 'abs')
     os.makedirs(output_dir, exist_ok=True)
     # print args
