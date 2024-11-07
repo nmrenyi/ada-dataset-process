@@ -21,6 +21,9 @@ if __name__ == '__main__':
     input_file = args.input_file
     output_file = args.output_file if args.output_file else input_file.replace('.jsonl', '_category_year.csv')
 
+    print(f"Input file: {input_file}")
+    print(f"Output file: {output_file}")
+
     with open(input_file, 'r') as f:
         for line in f:
             data = json.loads(line)
