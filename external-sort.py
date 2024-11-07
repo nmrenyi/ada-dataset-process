@@ -5,6 +5,7 @@ import os
 import json
 import heapq
 import sys
+import argparse
 
 def chunk_sort(input_file, chunk_size, temp_dir="temp_chunks"):
     if not os.path.exists(temp_dir):
@@ -78,12 +79,20 @@ def merge_sorted_chunks(chunks, output_file):
         os.remove(chunk)
 
 if __name__ == "__main__":
-    # use system argument to get the input file
-    input_file = sys.argv[1] if len(sys.argv) > 1 else './dataset/__mini__yt_metadata_en.jsonl.100k'  # Path to the large input file
-    output_file = sys.argv[2] if len(sys.argv) > 2 else input_file.split('/')[-1].split('.')[0] + '_sorted.jsonl'  # Path to the output file
-
-    # Example usage
-    chunk_size = 1000 * 1024 * 1024  # Size of each chunk in bytes (e.g., 100 MB)
+    # use argparse to get the chunk size
+    parser = argparse.ArgumentParser(description='External Sort')
+    parser.add_argument('--input_file', type=str, default='./dataset/__mini__yt_metadata_en.jsonl.100k', help='Path to the large input file')
+    parser.add_argument('--output_file', type=str, default='', help='Path to the output file')
+    parser.add_argument('--chunk_size', type=float, default=1.0, help='Size of each chunk in bytes (default: 1 GB)')
+    args = parser.parse_args()
+    # print args
+    print("Input file:", args.input_file)
+    print("Output file:", args.output_file)
+    print("Chunk size:", args.chunk_size, "GB")
+    
+    chunk_size = args.chunk_size * 2 ** 30
+    input_file = args.input_file
+    output_file = args.output_file if args.output_file else input_file.split('/')[-1].split('.')[0] + '_sorted.jsonl'
 
     chunks = chunk_sort(input_file, chunk_size)
     merge_sorted_chunks(chunks, output_file)
