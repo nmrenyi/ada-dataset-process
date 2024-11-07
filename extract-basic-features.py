@@ -19,7 +19,7 @@ if __name__ == '__main__':
     parser.add_argument('--output_file', type=str, default='', help='Path to the output file)')
     args = parser.parse_args()
     input_file = args.input_file
-    output_file = args.output_file if args.output_file else input_file.replace('.jsonl', '_category_year.csv')
+    output_file = args.output_file if args.output_file else input_file.replace('.jsonl', '_basic.csv')
 
     print(f"Input file: {input_file}")
     print(f"Output file: {output_file}")
