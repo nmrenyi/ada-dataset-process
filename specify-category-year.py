@@ -21,11 +21,14 @@ def main():
     print(df.head())
     categories = df['categories'].value_counts().index.tolist()
     upload_years = df['upload_date'].value_counts().index.tolist()
-    for category in categories:
+    categories.sort()
+    upload_years.sort()
+    for i, category in enumerate(categories):
         for year in upload_years:
             df_filtered = df[(df['categories'] == category) & (df['upload_date'] == year)]
             df_filtered.to_csv(f'{output_dir}/{category}_{year}.csv', index=False, sep='\t')
             print(f"Category: {category}, Year: {year}, Number of videos: {df_filtered.shape[0]} saved to {output_dir}/{category}_{year}.csv")
+        print(f"Category {category} done, remaining {len(categories) - i - 1} categories")
 
 if __name__ == '__main__':
     main()
