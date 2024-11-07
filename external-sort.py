@@ -85,14 +85,14 @@ if __name__ == "__main__":
     parser.add_argument('--output_file', type=str, default='', help='Path to the output file')
     parser.add_argument('--chunk_size', type=float, default=1.0, help='Size of each chunk in bytes (default: 1 GB)')
     args = parser.parse_args()
-    # print args
-    print("Input file:", args.input_file)
-    print("Output file:", args.output_file)
-    print("Chunk size:", args.chunk_size, "GB")
-    
+
     chunk_size = args.chunk_size * 2 ** 30
     input_file = args.input_file
     output_file = args.output_file if args.output_file else input_file.split('/')[-1].split('.')[0] + '_sorted.jsonl'
+
+    print("Input file:", args.input_file)
+    print("Output file:", output_file)
+    print("Chunk size:", args.chunk_size, "GB")
 
     chunks = chunk_sort(input_file, chunk_size)
     merge_sorted_chunks(chunks, output_file)
