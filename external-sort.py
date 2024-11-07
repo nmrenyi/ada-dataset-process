@@ -17,10 +17,10 @@ def chunk_sort(input_file, chunk_size, temp_dir="temp_chunks"):
         no_like_count_lines = 0
         for line in infile:
             data = json.loads(line)
-            if 'dislike_count' not in data:
+            if 'dislike_count' not in data or not data['dislike_count']:
                 no_dislike_count_lines += 1
                 continue
-            if 'like_count' not in data:
+            if 'like_count' not in data or not data['like_count']:
                 no_like_count_lines += 1
                 continue
             current_chunk.append(data)
